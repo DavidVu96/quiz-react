@@ -1,3 +1,7 @@
+# Overview
+
+This project is a [course](https://www.youtube.com/watch?v=F2JCjVSZlG0) from freeCodeCamp
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
