@@ -27,7 +27,6 @@ const Trivia = () => {
   
   const [categories, setCategories] = useState<TriviaCategory[]>([]);
   const [userSelectCategoryId, setUserSelectCategoryId] = useState("");
-  const [showSelection, setShowSelection] = useState(true);
 
   const loadCategory = async () => {
     if(categories.length === 0 ) {
@@ -46,7 +45,6 @@ const Trivia = () => {
   const startTrivia = async () => {
     setLoading(true);
     setGameOver(false);
-    setShowSelection(false);
     
     const newQuestions = await fetchQuizQuestions(TOTAL_QUESTION, Difficulty.EASY, userSelectCategoryId);
 
@@ -82,7 +80,6 @@ const Trivia = () => {
     const nextQuestion = number + 1;
     if (nextQuestion === TOTAL_QUESTION ) {
       setGameOver(true);
-      setShowSelection(true);
     } else {
       setNumber(nextQuestion)
     }
@@ -97,9 +94,9 @@ const Trivia = () => {
     <>
       <h1> REACT QUIZ </h1>
 
-      {!loading && showSelection && (
+      {gameOver || userAnswers.length === TOTAL_QUESTION ?(
         <Wrapper>
-          <select className="dropdown" onSelect={selectCategory}>
+          <select className="dropdown" onClick={selectCategory} onSelect={selectCategory}>
           {categories.map(category => (
               <option key={category.name} value={category.id}>
                   {category.name}
@@ -107,9 +104,9 @@ const Trivia = () => {
           ))}
           </select>
         </Wrapper>
-      )}
+      ) : null}
         
-      {gameOver || userAnswers.length === TOTAL_QUESTION ? (
+      {gameOver || userAnswers.length === TOTAL_QUESTION || categories.length !== 0 ? (
         <button className="start" onClick={startTrivia}>Start</button>
       ) : null }
 
@@ -117,7 +114,7 @@ const Trivia = () => {
       
       {loading &&  <p>Loading Question ...</p> }
 
-      {!loading && !gameOver && (
+      {!loading && !gameOver && questions!==undefined && (
         <QuestionCard 
         questionNr={number + 1}
         totalQuestions={TOTAL_QUESTION}
