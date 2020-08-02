@@ -1,10 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import QuestionCard from './QuestionCard';
 import {fetchQuizQuestions, fetchTriviaCategory} from '../API';
 //Types
 import {TriviaCategory} from '../API';
 import {Difficulty, QuestionState} from '../API';
 
+import {Wrapper} from './QuestionCard.style';
 
 export type AnswerObject = {
     question: string;
@@ -29,24 +30,23 @@ const Trivia = () => {
   const [showSelection, setShowSelection] = useState(true);
 
   const loadCategory = async () => {
-    setLoading(true);
-    const categories = await fetchTriviaCategory();
-    console.log(categories);
-    setCategories(categories);
-    setLoading(false);
+    if(categories.length === 0 ) {
+      const queried_category = await fetchTriviaCategory();
+      setCategories(queried_category);
+    }
   }
 
   const selectCategory = (e: React.MouseEvent<HTMLSelectElement>) => {
-    // console.log("Selected this id");
-    // console.log(e.currentTarget.value);
+    console.log("Selected this id");
+    console.log(e.currentTarget.value);
     const selection = e.currentTarget.value;
     setUserSelectCategoryId(selection);
-    setShowSelection(false);
   }
 
   const startTrivia = async () => {
     setLoading(true);
     setGameOver(false);
+    setShowSelection(false);
     
     const newQuestions = await fetchQuizQuestions(TOTAL_QUESTION, Difficulty.EASY, userSelectCategoryId);
 
@@ -86,25 +86,29 @@ const Trivia = () => {
     } else {
       setNumber(nextQuestion)
     }
-
   }
+
+  useEffect( () => { 
+    loadCategory();
+    return () => {}}
+  );
 
   return (
     <>
       <h1> REACT QUIZ </h1>
-        {!loading && showSelection && (
-          <button className="start" onClick={loadCategory}>Select Category </button>
-        ) }
+
+      {!loading && showSelection && (
+        <Wrapper>
+          <select className="dropdown" onSelect={selectCategory}>
+          {categories.map(category => (
+              <option key={category.name} value={category.id}>
+                  {category.name}
+              </option>
+          ))}
+          </select>
+        </Wrapper>
+      )}
         
-        {!loading && showSelection && (
-            <select onClick={selectCategory}>
-            {categories.map(category => (
-                <option key={category.name} value={category.id}>
-                    {category.name}
-                </option>
-            ))}
-        </select>
-        )}
       {gameOver || userAnswers.length === TOTAL_QUESTION ? (
         <button className="start" onClick={startTrivia}>Start</button>
       ) : null }
