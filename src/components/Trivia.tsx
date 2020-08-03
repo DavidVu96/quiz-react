@@ -106,7 +106,7 @@ const Trivia = () => {
         </Wrapper>
       ) : null}
         
-      {gameOver || userAnswers.length === TOTAL_QUESTION || categories.length !== 0 ? (
+      {gameOver || userAnswers.length === TOTAL_QUESTION ? (
         <button className="start" onClick={startTrivia}>Start</button>
       ) : null }
 
